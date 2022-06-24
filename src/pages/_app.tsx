@@ -2,11 +2,12 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { StarknetProvider, InjectedConnector } from "@starknet-react/core";
 import { ToastContainer } from "material-react-toastify";
 import { DefaultSeo } from "next-seo";
 import { AppProps } from "next/app";
-import { StarknetProvider } from "@starknet-react/core";
 import Head from "next/head";
+
 import "@fontsource/lexend/latin.css";
 
 import defaultSEOConfig from "../../next-seo.config";
@@ -28,8 +29,10 @@ const MyApp = ({
   pageProps,
   emotionCache = clientSideEmotionCache,
 }: MyAppProps) => {
+  const connectors = [new InjectedConnector({ showModal: true })];
+
   return (
-    <StarknetProvider>
+    <StarknetProvider connectors={connectors}>
       <CacheProvider value={emotionCache}>
         <ChakraProvider theme={customTheme}>
           <Head>

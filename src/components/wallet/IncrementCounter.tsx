@@ -7,8 +7,13 @@ import {
   useBreakpointValue,
   useColorMode,
 } from "@chakra-ui/react";
-import { Abi, stark } from "starknet";
-import { useContract, useStarknet, useStarknetInvoke } from "@starknet-react/core";
+import {
+  useContract,
+  useStarknet,
+  useStarknetInvoke,
+} from "@starknet-react/core";
+import { useCallback } from "react";
+import { Abi } from "starknet";
 
 import CounterAbi from "../../abi/counter.json";
 
@@ -21,7 +26,7 @@ const IncrementCounter = () => {
     abi: CounterAbi as Abi[],
     address: CONTRACT_ADDRESS,
   });
-  const { invoke } = useStarknetInvoke({
+  const { reset, invoke } = useStarknetInvoke({
     contract,
     method: "incrementCounter",
   });
@@ -30,6 +35,16 @@ const IncrementCounter = () => {
     base: "xs",
     sm: "md",
   });
+
+  const increment = useCallback(() => {
+    reset();
+    if (account) {
+      const amount = "0x1";
+      invoke({
+        args: [amount],
+      });
+    }
+  }, [account, invoke, reset]);
 
   return (
     <Box>
@@ -53,11 +68,7 @@ const IncrementCounter = () => {
           </Link>
         </Code>
         {account && (
-          <Button
-            my={4}
-            w="fit-content"
-            onClick={() => invoke({ args: { amount: "0x1" } })}
-          >
+          <Button my={4} w="fit-content" onClick={increment}>
             Increment Counter
           </Button>
         )}
